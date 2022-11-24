@@ -1,0 +1,15 @@
+.Module.symvers.cmd
+.blkram.ko.cmd
+.blkram.mod.cmd
+.blkram.mod.o.cmd
+.blkram.o.cmd
+.modules.order.cmd
+Module.symvers
+blkram.ko
+blkram.mod
+blkram.mod.c
+blkram.mod.o
+blkram.o
+modules.order
+compile_commands.json
+.cache/
