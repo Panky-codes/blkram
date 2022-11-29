@@ -11,6 +11,27 @@ module_param(capacity_mb, ulong, 0644);
 MODULE_PARM_DESC(capacity_mb, "capacity of the block device in MB");
 EXPORT_SYMBOL_GPL(capacity_mb);
 
+unsigned long max_segments = 32;
+module_param(max_segments, ulong, 0644);
+MODULE_PARM_DESC(max_segments, "maximum segments");
+EXPORT_SYMBOL_GPL(max_segments);
+
+unsigned long max_segment_size = 65536;
+module_param(max_segment_size, ulong, 0644);
+MODULE_PARM_DESC(max_segment_size, "maximum segment size");
+EXPORT_SYMBOL_GPL(max_segment_size);
+
+unsigned long lbs = PAGE_SIZE;
+module_param(lbs, ulong, 0644);
+MODULE_PARM_DESC(lbs, "Logical block size");
+EXPORT_SYMBOL_GPL(lbs);
+
+unsigned long pbs = PAGE_SIZE;
+module_param(pbs, ulong, 0644);
+MODULE_PARM_DESC(pbs, "Physical block size");
+EXPORT_SYMBOL_GPL(pbs);
+
+
 struct blk_ram_dev_t {
 	sector_t capacity;
 	u8 *data;
@@ -53,11 +74,12 @@ static blk_status_t blk_ram_queue_rq(struct blk_mq_hw_ctx *hctx,
 			break;
 		default:
 			err = BLK_STS_IOERR;
-			break;
+			goto end_request;
 		}
 		pos += len;
 	}
 
+end_request:
 	blk_mq_end_request(rq, err);
 	return BLK_STS_OK;
 }
@@ -115,9 +137,10 @@ static int __init blk_ram_init(void)
 	disk = blk_ram_dev->disk =
 		blk_mq_alloc_disk(&blk_ram_dev->tag_set, blk_ram_dev);
 
-	blk_queue_logical_block_size(disk->queue, PAGE_SIZE);
-	blk_queue_physical_block_size(disk->queue, PAGE_SIZE);
-	blk_queue_max_segments(disk->queue, 32);
+	blk_queue_logical_block_size(disk->queue, lbs);
+	blk_queue_physical_block_size(disk->queue, pbs);
+	blk_queue_max_segments(disk->queue, max_segments);
+	blk_queue_max_segment_size(disk->queue, max_segment_size);
 
 	if (IS_ERR(disk)) {
 		ret = PTR_ERR(disk);
