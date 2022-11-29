@@ -104,7 +104,6 @@ static int __init blk_ram_init(void)
 		return ret;
 
 	major = ret;
-
 	blk_ram_dev = kzalloc(sizeof(struct blk_ram_dev_t), GFP_KERNEL);
 
 	if (blk_ram_dev == NULL) {
@@ -157,7 +156,7 @@ static int __init blk_ram_init(void)
 	disk->major = major;
 	disk->first_minor = minor;
 	disk->minors = 1;
-	snprintf(disk->disk_name, DISK_NAME_LEN, "blkram%d", minor);
+	snprintf(disk->disk_name, DISK_NAME_LEN, "blkram");
 	disk->fops = &blk_ram_rq_ops;
 	disk->flags = GENHD_FL_NO_PART;
 	set_capacity(disk, blk_ram_dev->capacity);
