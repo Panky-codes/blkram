@@ -50,7 +50,7 @@ static blk_status_t blk_ram_queue_rq(struct blk_mq_hw_ctx *hctx,
 	blk_status_t err = BLK_STS_OK;
 	struct bio_vec bv;
 	struct req_iterator iter;
-	sector_t pos = blk_rq_pos(rq);
+	loff_t pos = blk_rq_pos(rq) << SECTOR_SHIFT;
 	struct blk_ram_dev_t *blkram = hctx->queue->queuedata;
 	loff_t data_len = (blkram->capacity << SECTOR_SHIFT);
 
